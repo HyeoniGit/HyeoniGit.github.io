@@ -390,3 +390,28 @@ footer {
     color: #fff !important;
   }
 }
+
+/* ---------- 홈: 카테고리 필터 ---------- */
+
+.category-pills .pill {
+  cursor: pointer;
+  font-family: inherit;
+
+  .pill-count {
+    margin-left: 0.25rem;
+    font-family: $font-mono;
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--navy-soft);
+  }
+}
+
+#post-list .note-card[hidden] {
+  display: none !important;
+}
+
+.filter-empty {
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--navy-soft);
+}

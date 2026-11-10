@@ -7,48 +7,9 @@ layout: default
 {% assign all_pinned = site.posts | where: 'pin', 'true' %}
 {% assign all_normal = site.posts | where_exp: 'item', 'item.pin != true and item.hidden != true' %}
 
-{% assign posts = '' | split: '' %}
-
-<!-- Get pinned posts on current page -->
-
-{% assign visible_start = paginator.page | minus: 1 | times: paginator.per_page %}
-{% assign visible_end = visible_start | plus: paginator.per_page %}
-
-{% if all_pinned.size > visible_start %}
-  {% if all_pinned.size > visible_end %}
-    {% assign pinned_size = paginator.per_page %}
-  {% else %}
-    {% assign pinned_size = all_pinned.size | minus: visible_start %}
-  {% endif %}
-
-  {% for i in (visible_start..all_pinned.size) limit: pinned_size %}
-    {% assign posts = posts | push: all_pinned[i] %}
-  {% endfor %}
-{% else %}
-  {% assign pinned_size = 0 %}
-{% endif %}
-
-<!-- Get normal posts on current page -->
-
-{% assign normal_size = paginator.posts | size | minus: pinned_size %}
-
-{% if normal_size > 0 %}
-  {% if pinned_size > 0 %}
-    {% assign normal_start = 0 %}
-  {% else %}
-    {% assign normal_start = visible_start | minus: all_pinned.size %}
-  {% endif %}
-
-  {% assign normal_end = normal_start | plus: normal_size | minus: 1 %}
-
-  {% for i in (normal_start..normal_end) %}
-    {% assign posts = posts | push: all_normal[i] %}
-  {% endfor %}
-{% endif %}
-
+{% assign all_posts = all_pinned | concat: all_normal %}
 {% assign category_order = '개발,CTF/Wargame,Bug Bounty,블로그/기술문서,논문/컨퍼런스,공모전/자격증' | split: ',' %}
 
-{% if paginator.page == 1 %}
   <section class="home-hero">
     <p class="eyebrow">Security · Build · Document</p>
     <h1 class="hero-title">배우고, 만들고,<br>끝까지 기록.</h1>
@@ -57,24 +18,27 @@ layout: default
       다음 질문도 함께.
     </p>
   </section>
-{% endif %}
 
 <section class="home-section">
   <p class="eyebrow">Field notes / Latest</p>
   <h2 class="section-title">최신 학습 기록</h2>
   <p class="section-lead">정답보다 과정. 여섯 분야의 학습 메모.</p>
 
-  <nav class="category-pills" aria-label="카테고리">
-    <a class="pill is-current" href="{{ '/categories/' | relative_url }}">전체</a>
+  <div class="category-pills" role="group" aria-label="카테고리별로 보기">
+    <button type="button" class="pill is-current" data-filter="all" aria-pressed="true">
+      전체 <span class="pill-count">{{ all_posts.size }}</span>
+    </button>
     {% for c in category_order %}
-      {% capture c_url %}/categories/{{ c | slugify | url_encode }}/{% endcapture %}
-      <a class="pill" href="{{ c_url | relative_url }}">{{ c }}</a>
+      {% assign c_posts = all_posts | where_exp: 'p', 'p.categories contains c' %}
+      <button type="button" class="pill" data-filter="{{ c | escape }}" aria-pressed="false">
+        {{ c }} <span class="pill-count">{{ c_posts.size }}</span>
+      </button>
     {% endfor %}
-  </nav>
+  </div>
 </section>
 
 <div id="post-list" class="flex-grow-1">
-  {% for post in posts %}
+  {% for post in all_posts %}
     {% assign first_category = post.categories | first %}
     {% assign tone = 'tone-cream' %}
     {% case first_category %}
@@ -82,7 +46,7 @@ layout: default
       {% when '개발', 'Bug Bounty' %}{% assign tone = 'tone-beige' %}
     {% endcase %}
 
-    <article class="card-wrapper card note-card {{ tone }}">
+    <article class="card-wrapper card note-card {{ tone }}" data-category="{{ first_category | escape }}">
       <a href="{{ post.url | relative_url }}" class="post-preview row g-0 flex-md-row-reverse">
         {% assign card_body_col = '12' %}
 
@@ -123,6 +87,33 @@ layout: default
 </div>
 <!-- #post-list -->
 
-{% if paginator.total_pages > 1 %}
-  {% include post-paginator.html %}
-{% endif %}
+<p class="filter-empty" hidden>이 분야의 글은 아직 없음.</p>
+
+<script>
+  (function () {
+    var pills = document.querySelectorAll('.category-pills .pill');
+    var cards = document.querySelectorAll('#post-list .note-card');
+    var empty = document.querySelector('.filter-empty');
+
+    function apply(filter) {
+      var shown = 0;
+      pills.forEach(function (p) {
+        var on = p.dataset.filter === filter;
+        p.classList.toggle('is-current', on);
+        p.setAttribute('aria-pressed', on);
+      });
+      cards.forEach(function (card) {
+        var match = filter === 'all' || card.dataset.category === filter;
+        card.hidden = !match;
+        if (match) shown++;
+      });
+      empty.hidden = shown > 0;
+    }
+
+    pills.forEach(function (p) {
+      p.addEventListener('click', function () {
+        apply(p.dataset.filter);
+      });
+    });
+  })();
+</script>
