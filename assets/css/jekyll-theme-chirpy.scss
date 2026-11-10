@@ -415,3 +415,12 @@ footer {
   text-align: center;
   color: var(--navy-soft);
 }
+
+/* ---------- 아카이브: 날짜를 월.일로 ---------- */
+
+#archives .archive-date {
+  width: 3rem;
+  font-family: $font-mono !important;
+  font-size: 0.85rem;
+  color: var(--navy-soft);
+}
