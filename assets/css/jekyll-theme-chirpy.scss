@@ -14,9 +14,12 @@
 {%- endif -%}
 ';
 
-/* ---------- 혀니 보안 노트 커스텀 ---------- */
+/* =========================================================
+   혀니 보안 노트 커스텀
+   - 폰트 2종: 세종학당체(모든 글), JetBrains Mono(라벨·날짜·코드)
+   - 색: 크림 바탕 + 남색 글씨 + 라벤더/베이지 면 + 버밀리언 포인트
+   ========================================================= */
 
-/* 세종학당체 (웹폰트로 변환해 저장소에 포함) */
 @font-face {
   font-family: 'KingSejongInstitute';
   src: url('{{ "/assets/fonts/KingSejongInstitute-Regular.woff2" | relative_url }}') format('woff2');
@@ -33,80 +36,348 @@
   font-display: swap;
 }
 
-/* 포인트 컬러: 버밀리언 하나 + 차콜 */
-@mixin light-colors {
+$font-text: 'KingSejongInstitute', -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+$font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+
+/* ---------- 색 ---------- */
+
+:root,
+:root[data-bs-theme='light'] {
+  --cream: #fbf7ec;
+  --cream-deep: #f3ecd9;
+  --beige: #e9e0c8;
+  --lavender: #cbb8e6;
+  --lavender-soft: #ede6f6;
+  --navy: #141a5e;
+  --navy-soft: #4a4f7a;
+  --line: #e3dcc8;
   --accent: #d1462f;
-  --text-color: #2b2b2b;
-  --heading-color: #1f1f1f;
-  --link-color: #c23e28;
-  --link-underline-color: rgb(209 70 47 / 35%);
-  --sidebar-bg: #f7f6f4;
-  --sidebar-active-color: #d1462f;
-  --site-title-color: #1f1f1f;
-  --toc-highlight: #d1462f;
-  --btn-share-hover-color: #d1462f;
-  --checkbox-checked-color: #d1462f;
+
+  --main-bg: var(--cream);
+  --text-color: var(--navy);
+  --heading-color: var(--navy);
+  --text-muted-color: var(--navy-soft);
+  --label-color: var(--navy-soft);
+  --link-color: var(--navy);
+  --link-underline-color: rgb(209 70 47 / 55%);
+  --main-border-color: var(--line);
+  --blockquote-border-color: var(--lavender);
+  --blockquote-text-color: var(--navy-soft);
+
+  --sidebar-bg: var(--lavender);
+  --sidebar-muted-color: var(--navy);
+  --sidebar-active-color: var(--navy);
+  --sidebar-hover-bg: rgb(255 255 255 / 45%);
+  --site-title-color: var(--navy);
+  --site-subtitle-color: var(--navy-soft);
+  --sidebar-btn-bg: rgb(255 255 255 / 55%);
+  --sidebar-btn-color: var(--navy);
+
+  --topbar-bg: rgb(251 247 236 / 85%);
+  --topbar-text-color: var(--navy);
+  --search-border-color: var(--line);
+
+  --card-bg: var(--cream);
+  --card-hover-bg: var(--cream-deep);
+  --card-shadow: none;
+  --toc-highlight: var(--accent);
+  --btn-share-hover-color: var(--accent);
+  --checkbox-checked-color: var(--navy);
+  --tb-odd-bg: var(--cream-deep);
+  --tb-border-color: var(--line);
+  --post-list-text-color: var(--navy-soft);
 }
 
-@mixin dark-colors {
-  --accent: #ef7a62;
-  --link-color: #f08a74;
-  --link-underline-color: rgb(239 122 98 / 35%);
-  --sidebar-active-color: #ef7a62;
-  --site-title-color: #e6e6e6;
-  --toc-highlight: #ef7a62;
-  --btn-share-hover-color: #ef7a62;
-  --checkbox-checked-color: #ef7a62;
-}
+/* ---------- 글꼴 정리 ---------- */
 
-:root[data-bs-theme='light'] { @include light-colors; }
-:root[data-bs-theme='dark'] { @include dark-colors; }
-
-:root:not([data-bs-theme]) {
-  @media (prefers-color-scheme: light) { @include light-colors; }
-  @media (prefers-color-scheme: dark) { @include dark-colors; }
-}
-
-/* 테마에 하드코딩된 영문 폰트를 본문 폰트로 통일 */
+body,
 kbd,
 .pagination,
 #archives,
 #tags .tag {
-  font-family: 'KingSejongInstitute', sans-serif !important;
+  font-family: $font-text !important;
 }
 
-/* 코드 폰트 */
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: $font-text;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--heading-color);
+}
+
 code,
 pre,
-kbd,
-.highlight {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+.highlight,
+.eyebrow,
+.note-date,
+.note-tag,
+#sidebar .nav-link span,
+#topbar,
+.post-meta,
+footer {
+  font-family: $font-mono;
 }
 
-/* 제목: 세종학당체 Bold, 자간 살짝 좁게 */
-h1, h2, h3, h4,
-#sidebar .site-title {
-  font-family: 'KingSejongInstitute', sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-/* 본문 가독성: 줄간격과 한 줄 길이 */
 .content {
-  line-height: 1.8;
+  line-height: 1.85;
 }
 
-/* 표 머리글 아래에 포인트 컬러 한 줄 */
-.content table thead th {
-  border-bottom: 2px solid var(--accent);
+/* 작은 라벨: 남색 모노, 넓은 자간 */
+.eyebrow {
+  margin: 0 0 0.6rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--navy-soft);
 }
 
-/* 사이드바 메뉴: 현재 위치만 포인트 컬러 */
-#sidebar .nav-item.active .nav-link {
-  color: var(--accent);
+/* ---------- 사이드바: 떠 있는 라벤더 카드 ---------- */
+
+#sidebar {
+  #avatar {
+    box-shadow: var(--navy) 0 0 0 2px;
+  }
+
+  .site-title {
+    font-family: $font-text;
+    font-weight: 700;
+    font-size: 1.45rem;
+    letter-spacing: -0.02em;
+  }
+
+  .site-subtitle {
+    font-style: normal !important;
+    font-size: 0.85rem;
+    line-height: 1.55;
+  }
+
+  .nav-item {
+    .nav-link {
+      border-radius: 10px;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+    }
+
+    &.active .nav-link {
+      background: var(--cream);
+      color: var(--navy);
+      box-shadow: inset 4px 0 0 var(--navy);
+    }
+  }
 }
 
-/* 카테고리 라벨 등 링크 hover */
-a:hover {
-  color: var(--accent);
+@media (min-width: 850px) {
+  #sidebar {
+    background: transparent;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 16px 12px 16px 16px;
+      z-index: -1;
+      border-radius: 20px;
+      background: var(--lavender);
+      box-shadow: 0 10px 30px rgb(20 26 94 / 12%);
+    }
+  }
+}
+
+/* ---------- 상단 바 ---------- */
+
+#topbar-wrapper {
+  border-bottom: 1px solid var(--line);
+}
+
+/* ---------- 홈: 소개 영역 ---------- */
+
+.home-hero {
+  margin: 1.5rem 0 3rem;
+  padding: 2.5rem 2.25rem;
+  border-radius: 20px;
+  background: var(--cream-deep);
+
+  .hero-title {
+    margin: 0 0 1.25rem;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: 1.2;
+  }
+
+  .hero-lead {
+    max-width: 38rem;
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--navy-soft);
+  }
+}
+
+.home-section {
+  margin-bottom: 1.5rem;
+
+  .section-title {
+    margin: 0 0 0.4rem;
+    font-size: 1.9rem;
+  }
+
+  .section-lead {
+    margin: 0 0 1.4rem;
+    color: var(--navy-soft);
+  }
+}
+
+.category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 16px;
+  background: var(--beige);
+
+  .pill {
+    padding: 0.35rem 0.95rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--cream);
+    color: var(--navy);
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 1px solid var(--line) !important;
+
+    &:hover {
+      background: var(--lavender-soft);
+    }
+
+    &.is-current {
+      border-color: var(--navy);
+      background: var(--lavender-soft);
+    }
+  }
+}
+
+/* ---------- 홈: 글 카드 ---------- */
+
+#post-list {
+  margin-top: 1.25rem;
+
+  .note-card {
+    margin-bottom: 1rem;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--cream);
+    transition: transform 0.15s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    &.tone-beige {
+      background: var(--cream-deep);
+    }
+
+    &.tone-lavender {
+      background: var(--lavender-soft);
+    }
+
+    .card-body {
+      padding: 1.5rem 1.6rem;
+    }
+
+    .card-title {
+      margin: 0.7rem 0 0.4rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .card-text p {
+      margin: 0;
+      color: var(--navy-soft);
+    }
+  }
+
+  .note-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .note-tag {
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    background: var(--beige);
+    color: var(--navy);
+    font-size: 0.72rem;
+  }
+
+  .tone-beige .note-tag {
+    background: var(--beige);
+  }
+
+  .tone-lavender .note-tag {
+    background: var(--lavender);
+  }
+
+  .note-date {
+    font-size: 0.75rem;
+    color: var(--navy-soft);
+  }
+
+  .note-more {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .note-card:hover .note-more {
+    color: var(--accent);
+  }
+}
+
+/* ---------- 본문 ---------- */
+
+.content {
+  a:not(.img-link) {
+    color: var(--navy);
+    text-decoration: underline;
+    text-decoration-color: var(--link-underline-color);
+    text-underline-offset: 3px;
+    border-bottom: none;
+
+    &:hover {
+      color: var(--accent);
+    }
+  }
+
+  table thead th {
+    border-bottom: 2px solid var(--navy);
+  }
+
+  blockquote {
+    border-left-width: 4px;
+    background: var(--lavender-soft);
+    border-radius: 0 10px 10px 0;
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* ---------- 푸터: 남색 띠 ---------- */
+
+footer {
+  margin-top: 3rem;
+  padding: 1.75rem 1.5rem !important;
+  border-radius: 16px 16px 0 0;
+  background: var(--navy);
+  color: rgb(255 255 255 / 80%) !important;
+  font-size: 0.78rem;
+
+  a {
+    color: #fff !important;
+  }
 }
