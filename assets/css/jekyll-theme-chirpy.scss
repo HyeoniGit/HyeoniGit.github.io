@@ -1,0 +1,95 @@
+---
+---
+
+@use 'abstracts/variables' with (
+  $theme: '{{ site.theme_mode }}',
+  $font-family-base: ('Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif),
+  $font-family-heading: ('Gowun Batang', 'Pretendard Variable', serif)
+);
+
+/* prettier-ignore */
+@use 'main
+{%- if jekyll.environment == 'production' -%}
+  .bundle
+{%- endif -%}
+';
+
+/* ---------- 혀니 보안 노트 커스텀 ---------- */
+
+/* 포인트 컬러: 버밀리언 하나 + 차콜 */
+@mixin light-colors {
+  --accent: #d1462f;
+  --text-color: #2b2b2b;
+  --heading-color: #1f1f1f;
+  --link-color: #c23e28;
+  --link-underline-color: rgb(209 70 47 / 35%);
+  --sidebar-bg: #f7f6f4;
+  --sidebar-active-color: #d1462f;
+  --site-title-color: #1f1f1f;
+  --toc-highlight: #d1462f;
+  --btn-share-hover-color: #d1462f;
+  --checkbox-checked-color: #d1462f;
+}
+
+@mixin dark-colors {
+  --accent: #ef7a62;
+  --link-color: #f08a74;
+  --link-underline-color: rgb(239 122 98 / 35%);
+  --sidebar-active-color: #ef7a62;
+  --site-title-color: #e6e6e6;
+  --toc-highlight: #ef7a62;
+  --btn-share-hover-color: #ef7a62;
+  --checkbox-checked-color: #ef7a62;
+}
+
+:root[data-bs-theme='light'] { @include light-colors; }
+:root[data-bs-theme='dark'] { @include dark-colors; }
+
+:root:not([data-bs-theme]) {
+  @media (prefers-color-scheme: light) { @include light-colors; }
+  @media (prefers-color-scheme: dark) { @include dark-colors; }
+}
+
+/* 테마에 하드코딩된 영문 폰트를 본문 폰트로 통일 */
+kbd,
+.pagination,
+#archives,
+#tags .tag {
+  font-family: 'Pretendard Variable', Pretendard, sans-serif !important;
+}
+
+/* 코드 폰트 */
+code,
+pre,
+kbd,
+.highlight {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* 제목: 바탕체는 굵게 하면 뭉개지므로 700까지만, 자간 살짝 좁게 */
+h1, h2, h3, h4,
+#sidebar .site-title {
+  font-family: 'Gowun Batang', 'Pretendard Variable', serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* 본문 가독성: 줄간격과 한 줄 길이 */
+.content {
+  line-height: 1.8;
+}
+
+/* 표 머리글 아래에 포인트 컬러 한 줄 */
+.content table thead th {
+  border-bottom: 2px solid var(--accent);
+}
+
+/* 사이드바 메뉴: 현재 위치만 포인트 컬러 */
+#sidebar .nav-item.active .nav-link {
+  color: var(--accent);
+}
+
+/* 카테고리 라벨 등 링크 hover */
+a:hover {
+  color: var(--accent);
+}
