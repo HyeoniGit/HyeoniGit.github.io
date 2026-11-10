@@ -109,16 +109,12 @@ h5 {
   color: var(--heading-color);
 }
 
+/* 모노 폰트는 영문 라벨·날짜·코드에만 (한글이 섞이는 곳은 세종학당체) */
 code,
 pre,
 .highlight,
 .eyebrow,
-.note-date,
-.note-tag,
-#sidebar .nav-link span,
-#topbar,
-.post-meta,
-footer {
+.note-date {
   font-family: $font-mono;
 }
 
@@ -158,8 +154,9 @@ footer {
   .nav-item {
     .nav-link {
       border-radius: 10px;
-      font-size: 0.78rem;
-      letter-spacing: 0.1em;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0;
     }
 
     &.active .nav-link {
@@ -276,6 +273,11 @@ footer {
       transform: translateY(-2px);
     }
 
+    .post-preview,
+    .post-preview:hover {
+      background: transparent;
+    }
+
     &.tone-beige {
       background: var(--cream-deep);
     }
@@ -309,6 +311,7 @@ footer {
 
   .note-tag {
     padding: 0.2rem 0.6rem;
+    font-weight: 700;
     border-radius: 6px;
     background: var(--beige);
     color: var(--navy);
@@ -375,7 +378,13 @@ footer {
   border-radius: 16px 16px 0 0;
   background: var(--navy);
   color: rgb(255 255 255 / 80%) !important;
-  font-size: 0.78rem;
+  font-size: 0.85rem;
+
+  p,
+  span,
+  time {
+    color: rgb(255 255 255 / 80%) !important;
+  }
 
   a {
     color: #fff !important;
